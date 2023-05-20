@@ -1,8 +1,10 @@
 const express = require('express')
 require('express-async-errors')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const path = require('path');
+require('dotenv').config()
+const cors = require('cors')
 const morgan = require('morgan');
 const { get } = require('http');
 const mongoose = require('mongoose');
@@ -16,7 +18,7 @@ const todosRoutes = require('./routes/todosRoutes')
 app.use(express.json()) // parsing the body for incoming requestwith json payload (data)
 app.use(express.urlencoded())// parsing the body for incoming requestwith urlencoded (from the browser,) payload (data)
 app.use(morgan('tiny'))// logging 
-
+app.use(cors())
 
 
 

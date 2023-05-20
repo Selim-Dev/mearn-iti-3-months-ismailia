@@ -1,13 +1,20 @@
 const express = require('express');
-
+const jwt =require('jsonwebtoken');
+const User = require('../models/user');
 const router = express.Router();
-
+const verifyToken = require('../utils/verifyToken');
+const Todo = require('../models/todo');
 //todos
 
 // get todos
-router.get('/todos',(req,res)=>{
+router.get('/',verifyToken,async(req,res)=>{
 	// get all todos from database
-	res.send('todos')
+	const todos = await Todo.find().populate({
+		path:'user',
+		select:'username email'
+		
+	});
+	res.send({todos})
 })
 // get user by id
 router.get('/todos/:id',(req,res)=>{
@@ -16,11 +23,11 @@ router.get('/todos/:id',(req,res)=>{
 	res.send('todos')
 })
 // create todos
-router.post('/todos',(req,res)=>{
-	// {email:"daflk",password:"sdfdsf"}
-	// create new user 
-	console.log('data',req.body)
-	res.send('user created');
+router.post('/',verifyToken,async(req,res)=>{
+	const {title} = req.body;
+	const todoCreated = new Todo({title,user:req.user._id});
+	await todoCreated.save();
+	res.send(todoCreated)
 })
 // update todos
 // put : replace the old document with the new document
